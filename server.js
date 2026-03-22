@@ -9,26 +9,26 @@ const mongoose = require("mongoose");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-
+// MongoDB
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log("MongoDB Error:", err.message));
 
 
 app.use(cors({
-  origin: "https://future-blink-frontend-xi.vercel.app/",
+  origin: "https://future-blink-frontend-xi.vercel.app",
   methods: ["GET", "POST"],
   credentials: true
 }));
 
 app.use(express.json());
 
-
+// Test route
 app.get("/", (req, res) => {
   res.send("Backend running ");
 });
 
-
+// AI Route
 app.post('/api/ask-ai', async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -40,7 +40,6 @@ app.post('/api/ask-ai', async (req, res) => {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-       
         model: "google/gemini-2.0-flash-lite-preview-02-05:free",
         messages: [
           { role: "user", content: prompt }
@@ -55,7 +54,7 @@ app.post('/api/ask-ai', async (req, res) => {
     );
 
     res.json({
-      result: response.data.choices[0].message.content
+      result: response.data?.choices?.[0]?.message?.content || "No response from AI"
     });
 
   } catch (err) {
@@ -81,7 +80,7 @@ app.post("/api/save", async (req, res) => {
   }
 });
 
-//  Start Server
+// Start Server
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
 });
