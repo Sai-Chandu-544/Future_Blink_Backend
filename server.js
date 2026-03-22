@@ -15,19 +15,9 @@ mongoose.connect(process.env.MONGO_URL)
   .catch(err => console.log("MongoDB Error:", err.message));
 
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://future-blink-frontend-xi.vercel.app"
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+ origin: "https://future-blink-frontend-xi.vercel.app",
+  methods: ["GET", "POST"],
   credentials: true
 }));
 
