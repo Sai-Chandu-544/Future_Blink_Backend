@@ -6,7 +6,7 @@ require("dotenv").config()
 const Chat=require("./models/model")
 
 const mongoose=require("mongoose")
-const PORT=process.env.PORT
+const PORT=process.env.PORT || 5000
 
 mongoose.connect("mongodb+srv://Sai_chandu:Atlas%401234567890@cluster0.8glnt.mongodb.net/Chat_Bot")
   .then(() => console.log("MongoDB Connected"));
@@ -69,4 +69,4 @@ app.post("/api/save", async (req, res) => {
   res.json({ message: "Saved successfully" });
 });
 
-app.listen(5000, () => console.log("Server running"));
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
