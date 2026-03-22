@@ -6,6 +6,7 @@ require("dotenv").config()
 const Chat=require("./models/model")
 
 const mongoose=require("mongoose")
+const PORT=process.env.PORT
 
 mongoose.connect("mongodb+srv://Sai_chandu:Atlas%401234567890@cluster0.8glnt.mongodb.net/Chat_Bot")
   .then(() => console.log("MongoDB Connected"));
@@ -17,7 +18,7 @@ app.use(express.json());
 app.post('/api/ask-ai', async (req, res) => {
   try {
     const { prompt } = req.body;
-    console.log("BODY:", req.body);
+    // console.log("BODY:", req.body);
 
     
     if (!prompt) {
