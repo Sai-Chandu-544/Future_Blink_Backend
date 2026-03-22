@@ -40,7 +40,7 @@ app.post('/api/ask-ai', async (req, res) => {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "openai/gpt-oss-120b:free",
+        model: "openai/gpt-3.5-turbo",
         messages: [
           { role: "user", content: prompt }
         ]
@@ -48,13 +48,15 @@ app.post('/api/ask-ai', async (req, res) => {
       {
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://future-blink-frontend-xi.vercel.app",
+          "X-Title": "Future Blink App"
         }
       }
     );
 
     res.json({
-      result: response.data?.choices?.[0]?.message?.content || "No response from AI"
+      result: response.data?.choices?.[0]?.message?.content || "No response"
     });
 
   } catch (err) {
