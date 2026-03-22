@@ -40,7 +40,11 @@ app.post('/api/ask-ai', async (req, res) => {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
+<<<<<<< HEAD
         model: "openai/gpt-3.5-turbo",
+=======
+        model: "openai/gpt-oss-120b:free",
+>>>>>>> 8abf345c4ed33164804d7fcf999eeeedf53d995e
         messages: [
           { role: "user", content: prompt }
         ]
