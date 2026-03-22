@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO_URL)
 
 
 app.use(cors({
-  origin: "https://future-blink-frontend-xi.vercel.app",
+ origin: "https://future-blink-frontend-xi.vercel.app",
   methods: ["GET", "POST"],
   credentials: true
 }));
