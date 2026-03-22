@@ -1,26 +1,38 @@
-const express=require("express")
-const cors=require("cors")
-const axios=require("axios")
-require("dotenv").config()
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
+require("dotenv").config();
 
-const Chat=require("./models/model")
-
-const mongoose=require("mongoose")
-const PORT=process.env.PORT || 5000
-
-mongoose.connect("mongodb+srv://Sai_chandu:Atlas%401234567890@cluster0.8glnt.mongodb.net/Chat_Bot")
-  .then(() => console.log("MongoDB Connected"));
+const Chat = require("./models/model");
+const mongoose = require("mongoose");
 
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 5000;
+
+
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log("MongoDB Error:", err.message));
+
+
+app.use(cors({
+  origin: "https://future-blink-frontend-xi.vercel.app/",
+  methods: ["GET", "POST"],
+  credentials: true
+}));
+
 app.use(express.json());
+
+
+app.get("/", (req, res) => {
+  res.send("Backend running ");
+});
+
 
 app.post('/api/ask-ai', async (req, res) => {
   try {
     const { prompt } = req.body;
-    // console.log("BODY:", req.body);
 
-    
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required" });
     }
@@ -28,19 +40,16 @@ app.post('/api/ask-ai', async (req, res) => {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-      
-        model: "openai/gpt-oss-120b:free",
+       
+        model: "google/gemini-2.0-flash-lite-preview-02-05:free",
         messages: [
-          {
-            role: "user",
-            content: prompt
-          }
+          { role: "user", content: prompt }
         ]
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.API_KEY}`,
-          "Content-Type": "application/json" 
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json"
         }
       }
     );
@@ -50,23 +59,29 @@ app.post('/api/ask-ai', async (req, res) => {
     });
 
   } catch (err) {
-   
     console.log("ERROR:", err.response?.data || err.message);
 
     res.status(500).json({
-      error: "Failed to fetch AI response"
+      error: err.response?.data || "Failed to fetch AI response"
     });
   }
 });
 
-
+// Save Route
 app.post("/api/save", async (req, res) => {
-  const { prompt, response } = req.body;
+  try {
+    const { prompt, response } = req.body;
 
-  const newFlow = new Chat({ prompt, response });
-  await newFlow.save();
+    const newFlow = new Chat({ prompt, response });
+    await newFlow.save();
 
-  res.json({ message: "Saved successfully" });
+    res.json({ message: "Saved successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Save failed" });
+  }
 });
 
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+//  Start Server
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
+});
